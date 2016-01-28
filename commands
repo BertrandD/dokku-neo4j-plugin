@@ -37,7 +37,7 @@ case "$1" in
 
     dokku_log_info1 "Starting container"
     SERVICE_NAME=$(get_service_name "$SERVICE")
-    ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_ROOT/data:/var/neo4j/data" -d --restart always --label dokku=service --label dokku.service=neo4j "$NEO4J_PLUGIN_IMAGE_COMMUNITY:$PLUGIN_IMAGE_VERSION")
+    ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_ROOT/data:/var/neo4j/data" -d --restart always --label dokku=service --label dokku.service=neo4j "$NEO4J_PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION_COMMUNITY")
     echo "$ID" > "$SERVICE_ROOT/ID"
     echo "Community" > "$SERVICE_ROOT/EDITION"
 
@@ -62,7 +62,7 @@ case "$1" in
 
     dokku_log_info1 "Starting container"
     SERVICE_NAME=$(get_service_name "$SERVICE")
-    ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_ROOT/data:/var/neo4j/data" -d --restart always --label dokku=service --label dokku.service=neo4j "$NEO4J_NEO4J_PLUGIN_IMAGE_VERSION:$PLUGIN_IMAGE_VERSION")
+    ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_ROOT/data:/var/neo4j/data" -d --restart always --label dokku=service --label dokku.service=neo4j "$NEO4J_PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION_ENTERPRISE")
     echo "$ID" > "$SERVICE_ROOT/ID"
     echo "Enterprise" > "$SERVICE_ROOT/EDITION"
 
@@ -207,13 +207,13 @@ case "$1" in
     ensure_docker_images
 
     if [[ "$EDITION" == "Community" ]]; then
-      PLUGIN_IMAGE=$NEO4J_PLUGIN_IMAGE_COMMUNITY;
+      PLUGIN_IMAGE_VERSION=$PLUGIN_IMAGE_VERSION_COMMUNITY;
     else
-      PLUGIN_IMAGE=$NEO4J_NEO4J_PLUGIN_IMAGE_VERSION;
+      PLUGIN_IMAGE_VERSION=$PLUGIN_IMAGE_VERSION_ENTERPRISE;
     fi
 
     # shellcheck disable=SC2016
-    docker run -it --link "$SERVICE_NAME:neo4j" --rm "$PLUGIN_IMAGE:$NEO4J_IMAGE_VERSION" sh -c 'exec /var/neo4j/bin/neo4j-shell -host "$NEO4J_PORT_7474_TCP_ADDR"'
+    docker run -it --link "$SERVICE_NAME:neo4j" --rm "$NEO4J_PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION" sh -c 'exec /var/neo4j/bin/neo4j-shell -host "$NEO4J_PORT_7474_TCP_ADDR"'
     ;;
 
   $NEO4J_PLUGIN_COMMAND_PREFIX:info)

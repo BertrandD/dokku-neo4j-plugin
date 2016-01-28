@@ -124,6 +124,7 @@ service_info() {
   local SERVICE_VERSION=$(service_version "$SERVICE")
   local SERVICE_EDITION=$(service_edition "$SERVICE")
   local SERVICE_ALIAS=$(service_alias "$SERVICE")
+  local SERVICE_IP=$(service_ip "$SERVICE")
 
   echo
   dokku_log_info1 "Informations about the Neo4j service \"$SERVICE\""
@@ -169,7 +170,8 @@ service_link() {
   echo "$APP" >> "$LINKS_FILE"
   sort "$LINKS_FILE" -u -o "$LINKS_FILE"
   dokku_log_info1 "Restarting app $APP"
-  dokku ps:restart "$APP"
+  dokku config:set "$APP" "NEO4J_URL=$(service_url ${SERVICE})"
+  dokku config "$APP"
 }
 
 service_logs() {
@@ -338,7 +340,16 @@ service_url() {
 
   local ID="$(cat "$SERVICE_ROOT/ID")"
   local IP="$(get_container_ip "$ID")"
-  echo "$NEO4J_PLUGIN_SCHEME://$IP:${NEO4J_PLUGIN_DATASTORE_PORTS[0]}"
+  echo "$NEO4J_PLUGIN_SCHEME://$(service_ip "$SERVICE"):${NEO4J_PLUGIN_DATASTORE_PORTS[0]}"
+}
+
+service_ip() {
+  local SERVICE="$1"
+  local SERVICE_ROOT="$NEO4J_PLUGIN_DATA_ROOT/$SERVICE"
+
+  local ID="$(cat "$SERVICE_ROOT/ID")"
+
+  echo $(get_container_ip "$ID")
 }
 
 service_edition() {

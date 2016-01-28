@@ -331,6 +331,7 @@ service_unlink() {
   sort "$LINKS_FILE" -u -o "$LINKS_FILE"
 
   dokku_log_info1 "Restarting app $APP"
+  dokku config:unset "$APP" "NEO4J_URL"
   dokku ps:restart "$APP"
 }
 

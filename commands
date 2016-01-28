@@ -37,7 +37,7 @@ case "$1" in
 
     dokku_log_info1 "Starting container"
     SERVICE_NAME=$(get_service_name "$SERVICE")
-    ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_ROOT/data:/var/neo4j/data" -d --restart always --label dokku=service --label dokku.service=neo4j "$NEO4J_PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION_COMMUNITY")
+    ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_ROOT/data:/var/neo4j/data" -d --env=NEO4J_AUTH=$NEO4J_PLUGIN_AUTH --restart always --label dokku=service --label dokku.service=neo4j "$NEO4J_PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION_COMMUNITY")
     echo "$ID" > "$SERVICE_ROOT/ID"
     echo "Community" > "$SERVICE_ROOT/EDITION"
 
@@ -62,7 +62,7 @@ case "$1" in
 
     dokku_log_info1 "Starting container"
     SERVICE_NAME=$(get_service_name "$SERVICE")
-    ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_ROOT/data:/var/neo4j/data" -d --restart always --label dokku=service --label dokku.service=neo4j "$NEO4J_PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION_ENTERPRISE")
+    ID=$(docker run --name "$SERVICE_NAME" -v "$SERVICE_ROOT/data:/var/neo4j/data" -d --env=NEO4J_AUTH=$NEO4J_PLUGIN_AUTH --restart always --label dokku=service --label dokku.service=neo4j "$NEO4J_PLUGIN_IMAGE:$PLUGIN_IMAGE_VERSION_ENTERPRISE")
     echo "$ID" > "$SERVICE_ROOT/ID"
     echo "Enterprise" > "$SERVICE_ROOT/EDITION"
 
